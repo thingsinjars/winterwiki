@@ -1,0 +1,105 @@
+#!/bin/bash
+
+USAGE="Usage: `basename $0` [-hv] -u username -p project"
+
+if [ -d "~/tmp" ]; then
+    TEMP_DIR=~/tmp
+else
+    TEMP_DIR=/tmp
+fi
+
+BUILT_DIR=$TEMP_DIR/ww.$$.$RANDOM
+DEPLOY_DIR=$TEMP_DIR/ww.$$.$RANDOM
+
+# Parse command line options.
+while getopts "hvu:p:" OPT; do
+    case "$OPT" in
+        h)
+            echo $USAGE
+            exit 0
+            ;;
+        v)
+            echo "`basename $0` version 0.1"
+            exit 0
+            ;;
+        u)
+            USERNAME=$OPTARG
+            ;;
+        p)
+            PROJECT=$OPTARG
+            ;;
+        \?)
+            # getopts issues an error message
+            echo $USAGE >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Remove the switches we parsed above.
+shift `expr $OPTIND - 1`
+
+# Check to see if wintersmith is installed
+# Exit if not
+command -v wintersmith >/dev/null 2>&1 || { echo >&2 "Wintersmith not installed.  Aborting."; exit 1; }
+
+# if our randomly-generated directory name already exists
+# there's some kind of problem
+if [ -d $BUILT_DIR ]; then
+    echo >&2 "Broken random number generator."; 
+    exit 1; 
+else
+    mkdir $BUILT_DIR
+fi
+
+# Check out the templates of the project
+git clone git://github.com/$USERNAME/$PROJECT.git $BUILT_DIR
+
+# Check out the content of the project from the wiki
+git clone git://github.com/$USERNAME/$PROJECT.wiki.git $BUILT_DIR/newcontents
+
+cp -f $BUILT_DIR/newcontents/* $BUILT_DIR/contents
+
+# If there isn't an index file, move the Home page
+if [ ! -f $BUILT_DIR/contents/index.md ]; then
+    mv $BUILT_DIR/contents/Home.md $BUILT_DIR/contents/index.md
+fi
+
+# Temporary solution until there's a Wintersmith plugin to allow a default template
+for file in $BUILT_DIR/contents/*.md ; do
+    echo "---
+template: layout.jade
+title: temp
+---" > $BUILT_DIR/tmpfile && cat $file >> $BUILT_DIR/tmpfile && mv $BUILT_DIR/tmpfile $file
+done
+
+
+# Move here to make the rest of the script easier
+cd $BUILT_DIR
+
+# Generate the static site
+wintersmith build
+
+# Switch to the gh-pages branch to push the site to GitHub Pages
+git clone git://github.com/$USERNAME/$PROJECT.git $DEPLOY_DIR
+
+cd $DEPLOY_DIR
+
+git checkout --orphan gh-pages
+
+git pull
+
+cp -r  $BUILT_DIR/build/* $DEPLOY_DIR
+
+sed -i '' -E 's|href="/wiki/([^"]*)"|href="\1.html"|g' *.html
+
+git add .
+
+git commit -m"Updated with new content"
+
+# It's a bt ugly to do a force but it saves a lot of trouble
+git push --force origin gh-pages
+
+open $DEPLOY_DIR
+
+# EOF
