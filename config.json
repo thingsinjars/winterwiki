@@ -1,0 +1,8 @@
+{
+  "locals": {
+    "url": "http://localhost:8080",
+    "name": "GitHub Wiki Pages",
+    "owner": "The Owner's name goes here",
+    "description": "Generated using WinterWiki"
+  }
+}
