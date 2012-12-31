@@ -1,0 +1,54 @@
+!!! 5
+html(lang='en')
+head
+    meta(charset='utf-8')
+    block title
+      title= locals.name
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    link(href='http://twitter.github.com/bootstrap/assets/css/bootstrap.css', rel='stylesheet')
+    link(href='style/main.css', rel='stylesheet')
+    link(href='style/main.css', rel='stylesheet')
+    link(href='http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css', rel='stylesheet')
+    //if lt IE 9
+      script(src='http://html5shim.googlecode.com/svn/trunk/html5.js')
+    link(rel='apple-touch-icon-precomposed', sizes='144x144', href='http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-144-precomposed.png')
+    link(rel='apple-touch-icon-precomposed', sizes='114x114', href='http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-114-precomposed.png')
+    link(rel='apple-touch-icon-precomposed', sizes='72x72', href='http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-72-precomposed.png')
+    link(rel='apple-touch-icon-precomposed', href='http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-57-precomposed.png')
+    link(rel='shortcut icon', href='http://twitter.github.com/bootstrap/assets/ico/favicon.png')
+  body
+    .container-narrow
+      .masthead
+        include navigation
+        h3.muted 
+          = locals.name
+      hr
+      .jumbotron
+        if page.title == 'index'
+          h1
+            = locals.name
+        else
+          h1
+            = page.title
+        != page.html
+      hr
+      .footer
+        p Generated using 
+          a(href='http://github.com/thingsinjars/winterwiki') 
+          | WinterWiki
+
+    script(src='http://twitter.github.com/bootstrap/assets/js/jquery.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-transition.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-dropdown.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-scrollspy.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-tab.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-tooltip.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-popover.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-button.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-collapse.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-carousel.js')
+    script(src='http://twitter.github.com/bootstrap/assets/js/bootstrap-typeahead.js')
