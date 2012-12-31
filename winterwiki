@@ -13,9 +13,9 @@ DEPLOY_DIR=$TEMP_DIR/ww.$$.$RANDOM
 
 function on_exit()
 {
-    open $DEPLOY_DIR
-    # rm -rf $BUILT_DIR
-    # rm -rf $DEPLOY_DIR
+    # open $DEPLOY_DIR
+    rm -rf $BUILT_DIR
+    rm -rf $DEPLOY_DIR
 }
 
 # Parse command line options.
@@ -97,6 +97,8 @@ git clone git://github.com/$USERNAME/$PROJECT.git $DEPLOY_DIR
 cd $DEPLOY_DIR
 
 git checkout --orphan gh-pages
+
+rm -rf $DEPLOY_DIR/*
 
 git fetch origin gh-pages
 
