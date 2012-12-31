@@ -11,6 +11,13 @@ fi
 BUILT_DIR=$TEMP_DIR/ww.$$.$RANDOM
 DEPLOY_DIR=$TEMP_DIR/ww.$$.$RANDOM
 
+function on_exit()
+{
+    open $DEPLOY_DIR
+    # rm -rf $BUILT_DIR
+    # rm -rf $DEPLOY_DIR
+}
+
 # Parse command line options.
 while getopts "hvu:p:" OPT; do
     case "$OPT" in
@@ -67,9 +74,13 @@ fi
 
 # Temporary solution until there's a Wintersmith plugin to allow a default template
 for file in $BUILT_DIR/contents/*.md ; do
+    filename=$(basename "$file")
+    extension="${filename##*.}"
+    filename="${filename%.*}"
+    filename=`echo $filename|sed 's/-/ /g'`
     echo "---
 template: layout.jade
-title: temp
+title: $filename
 ---" > $BUILT_DIR/tmpfile && cat $file >> $BUILT_DIR/tmpfile && mv $BUILT_DIR/tmpfile $file
 done
 
@@ -87,19 +98,22 @@ cd $DEPLOY_DIR
 
 git checkout --orphan gh-pages
 
-git pull
+git fetch origin gh-pages
+
+git merge origin/gh-pages
 
 cp -r  $BUILT_DIR/build/* $DEPLOY_DIR
 
 sed -i '' -E 's|href="/wiki/([^"]*)"|href="\1.html"|g' *.html
+sed -i '' -E 's|href="/([^"]*)"|href="\1.html"|g' *.html
 
 git add .
 
 git commit -m"Updated with new content"
 
-# It's a bt ugly to do a force but it saves a lot of trouble
+# The --force should be unnecessary here but just in case...
 git push --force origin gh-pages
 
-open $DEPLOY_DIR
+trap on_exit EXIT
 
 # EOF
