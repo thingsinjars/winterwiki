@@ -107,6 +107,7 @@ git merge origin/gh-pages
 cp -r  $BUILT_DIR/build/* $DEPLOY_DIR
 
 sed -i '' -E 's|href="/wiki/([^"]*)"|href="\1.html"|g' *.html
+sed -i '' -E 's|href="https://github.com/'$USERNAME'/'$PROJECT'/wiki/([^"]*)"|href="\1.html"|g' *.html
 sed -i '' -E 's|href="/([^"]*)"|href="\1.html"|g' *.html
 
 git add .
